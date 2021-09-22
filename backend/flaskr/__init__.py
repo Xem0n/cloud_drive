@@ -1,12 +1,11 @@
 import os
 from flask import Flask
+from . import auth
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-    )
+
+    auth.jwt.init_app(app)
 
     load_config(app, test_config)
     ensure_instance_folder(app)
@@ -29,5 +28,4 @@ def ensure_instance_folder(app):
         pass
 
 def register_blueprints(app):
-    from . import auth
     app.register_blueprint(auth.bp)
