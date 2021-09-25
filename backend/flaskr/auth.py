@@ -1,5 +1,5 @@
-import redis
 from flask import Blueprint, current_app
+from flask.globals import request
 from flask_jwt_extended import (
     JWTManager, 
     jwt_required, 
@@ -7,17 +7,28 @@ from flask_jwt_extended import (
     get_jwt_identity,
     get_jwt
 )
+from flask_bcrypt import Bcrypt
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 jwt = JWTManager()
+bcrypt = Bcrypt()
 
-jwt_redis_blocklist = redis.StrictRedis(
-    host='localhost',
-    port=6379,
-    db=0,
-    decode_responses=True
-)
+blacklist = set()
+
+@jwt.token_in_blocklist_loader
+def check_if_token_blacklisted(header, payload):
+    jti = payload['jti']
+
+    return jti in blacklist
+
+@bp.route('/register', methods=['POST'])
+def register():
+    name = request.form.get('name', '')
+    password = request.form.get('password', '')
+    password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    return {'msg': 'Ok'}, 200
 
 @bp.route('/login')
 def login():
@@ -28,8 +39,7 @@ def login():
 @jwt_required()
 def logout():
     jti = get_jwt()['jti']
-    access_expires = current_app.config['JWT_ACCESS_TOKEN_EXPIRES']
-    jwt_redis_blocklist.set(jti, '', ex=access_expires)
+    blacklist.add(jti)
 
     return {'msg': 'Access token revoked'}
 
