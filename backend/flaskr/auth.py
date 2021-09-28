@@ -8,38 +8,54 @@ from flask_jwt_extended import (
     get_jwt
 )
 from flask_bcrypt import Bcrypt
+from .db import db
+from .db.user import User
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 jwt = JWTManager()
 bcrypt = Bcrypt()
 
-blacklist = set()
+token_blacklist = set()
 
 @jwt.token_in_blocklist_loader
 def check_if_token_blacklisted(header, payload):
     jti = payload['jti']
 
-    return jti in blacklist
+    return jti in token_blacklist
 
 @bp.route('/register', methods=['POST'])
 def register():
     name = request.form.get('name', '')
     password = request.form.get('password', '')
-    password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    return {'msg': 'Ok'}, 200
+    new_user = User(name=name, password=password)
+
+    try:
+        new_user.is_valid()
+    except Exception as e:
+        return {'error': str(e)}, 406
+    else:
+        new_user.encrypt(bcrypt)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        return {'msg': 'Ok'}, 200
 
 @bp.route('/login')
 def login():
     token = create_access_token(identity='yo')
     return {'token': token}
 
+def authenticate(name, password):
+    pass
+
 @bp.route('/logout')
 @jwt_required()
 def logout():
     jti = get_jwt()['jti']
-    blacklist.add(jti)
+    token_blacklist.add(jti)
 
     return {'msg': 'Access token revoked'}
 
