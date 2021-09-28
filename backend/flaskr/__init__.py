@@ -1,7 +1,7 @@
 import os
 from flask import Flask
-from . import db
-from . import auth
+from .db import db
+from .auth import jwt, bcrypt, bp as auth_blueprint
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -28,12 +28,12 @@ def ensure_instance_folder(app):
         pass
 
 def register_extensions(app):
-    db.db.init_app(app)
-    auth.jwt.init_app(app)
-    auth.bcrypt.init_app(app)
+    db.init_app(app)
+    jwt.init_app(app)
+    bcrypt.init_app(app)
 
     with app.app_context():
-        db.db.create_all()
+        db.create_all()
 
 def register_blueprints(app):
-    app.register_blueprint(auth.bp)
+    app.register_blueprint(auth_blueprint)
