@@ -1,13 +1,5 @@
 from . import db
-
-class InvalidNameError(Exception):
-    pass
-
-class InvalidPasswordError(Exception):
-    pass
-
-class AlreadyExistsError(Exception):
-    pass
+from flaskr.bcrypt import bcrypt
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
@@ -21,13 +13,26 @@ class User(db.Model):
         if len(self.password) < 8 or len(self.password) > 16:
             raise InvalidPasswordError('Invalid password!')
 
-        if User.query.filter_by(name=self.name).first() is not None:
+        if User.query.filter_by(name=self.name).first():
             raise AlreadyExistsError('User with given name already exists!')
 
         return True
 
-    def encrypt(self, bcrypt):
+    def encrypt(self):
         self.password = bcrypt.generate_password_hash(self.password).decode('utf-8')
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
     def __repr__(self):
         return '<User %s - %s>' % (self.name, self.password)
+
+class InvalidNameError(Exception):
+    pass
+
+class InvalidPasswordError(Exception):
+    pass
+
+class AlreadyExistsError(Exception):
+    pass
