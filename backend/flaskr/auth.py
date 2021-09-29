@@ -1,20 +1,10 @@
-from flask import Blueprint, current_app
 from flask.globals import request
-from flask_jwt_extended import (
-    JWTManager, 
-    jwt_required, 
-    create_access_token, 
-    get_jwt_identity,
-    get_jwt
-)
-from flask_bcrypt import Bcrypt
-from .db import db
+from flask_jwt_extended import JWTManager, get_jwt_identity
+
+from .bcrypt import bcrypt
 from .db.user import User
 
-bp = Blueprint('auth', __name__, url_prefix='/auth')
-
 jwt = JWTManager()
-bcrypt = Bcrypt()
 
 token_blacklist = set()
 
@@ -24,44 +14,17 @@ def check_if_token_blacklisted(header, payload):
 
     return jti in token_blacklist
 
-@bp.route('/register', methods=['POST'])
-def register():
-    name = request.form.get('name', '')
-    password = request.form.get('password', '')
+@jwt.user_lookup_loader
+def get_user_from_token(header, payload):
+    id = payload['sub']
+    current_user = User.query.filter_by(id=id).first()
 
-    new_user = User(name=name, password=password)
-
-    try:
-        new_user.is_valid()
-    except Exception as e:
-        return {'error': str(e)}, 406
-    else:
-        new_user.encrypt(bcrypt)
-
-        db.session.add(new_user)
-        db.session.commit()
-
-        return {'msg': 'Ok'}, 200
-
-@bp.route('/login')
-def login():
-    token = create_access_token(identity='yo')
-    return {'token': token}
+    return current_user
 
 def authenticate(name, password):
-    pass
+    user = User.query.filter_by(name=name).first()
 
-@bp.route('/logout')
-@jwt_required()
-def logout():
-    jti = get_jwt()['jti']
-    token_blacklist.add(jti)
-
-    return {'msg': 'Access token revoked'}
-
-# test purposes
-@bp.route('/protected')
-@jwt_required()
-def protected():
-    user = get_jwt_identity()
-    return {'user': user}
+    if user and bcrypt.check_password_hash(user.password, password):
+        return user
+    else:
+        return None
