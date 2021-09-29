@@ -1,14 +1,17 @@
 import os
 from flask import Flask
+
 from .db import db
-from .auth import jwt, bcrypt, bp as auth_blueprint
+from .auth import jwt
+from .bcrypt import bcrypt
+from .views.auth import bp as auth_blueprint
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
 
     load_config(app, test_config)
     ensure_instance_folder(app)
-    register_extensions(app)
+    init_extensions(app)
     register_blueprints(app)
 
     return app
@@ -27,7 +30,7 @@ def ensure_instance_folder(app):
     except OSError:
         pass
 
-def register_extensions(app):
+def init_extensions(app):
     db.init_app(app)
     jwt.init_app(app)
     bcrypt.init_app(app)
