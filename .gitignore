@@ -4,6 +4,7 @@ backend/*.pyc
 backend/__pycache__/
 backend/flaskr/__pycache__/
 backend/flaskr/db/__pycache__/
+backend/flaskr/views/__pycache__/
 
 backend/instance/
 
