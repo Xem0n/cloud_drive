@@ -7,7 +7,7 @@ class User(db.Model):
     password = db.Column(db.String(60), unique=False, nullable=False)
 
     def is_valid(self):
-        if len(self.name) < 3:
+        if not 3 < len(self.name) < 80:
             raise InvalidNameError('Invalid username!')
 
         if len(self.password) < 8 or len(self.password) > 16:
