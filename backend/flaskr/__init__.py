@@ -4,7 +4,9 @@ from flask import Flask
 from .db import db
 from .auth import jwt
 from .bcrypt import bcrypt
+
 from .views.auth import bp as auth_blueprint
+from .views.files import bp as files_blueprint
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -19,7 +21,7 @@ def create_app(test_config=None):
 def load_config(app, test_config):
     if test_config is None:
         # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=False)
+        app.config.from_pyfile('config.py', silent=True)
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
@@ -40,3 +42,4 @@ def init_extensions(app):
 
 def register_blueprints(app):
     app.register_blueprint(auth_blueprint)
+    app.register_blueprint(files_blueprint)
