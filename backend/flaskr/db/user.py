@@ -1,3 +1,4 @@
+from sqlalchemy.orm import backref
 from . import db
 from flaskr.bcrypt import bcrypt
 
@@ -5,6 +6,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(60), unique=False, nullable=False)
+    files = db.relationship('File', backref='user', lazy=True)
 
     def is_valid(self):
         if not 3 < len(self.name) < 80:
