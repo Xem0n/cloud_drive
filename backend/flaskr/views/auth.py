@@ -2,7 +2,6 @@ from flask import Blueprint, request
 from flask_jwt_extended import (
     jwt_required, 
     get_jwt, 
-    get_jwt_identity,
     get_current_user,
     create_access_token
 )
@@ -14,8 +13,8 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/register', methods=['POST'])
 def register():
-    name = request.form.get('name', '')
-    password = request.form.get('password', '')
+    name = request.form.get('name', '').strip()
+    password = request.form.get('password', '').strip()
 
     new_user = User(name=name, password=password)
 
@@ -55,11 +54,3 @@ def logout():
     token_blacklist.add(jti)
 
     return {'msg': 'Access token revoked'}
-
-# test purposes
-@bp.route('/protected')
-@jwt_required()
-def protected():
-    user = get_jwt_identity()
-
-    return {'user': user}
