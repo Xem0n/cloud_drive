@@ -30,8 +30,7 @@ class File(db.Model):
     
     def save_file(self):
         upload_folder = current_app.config['UPLOAD_FOLDER']
-        _, extension = os.path.splitext(self.file.filename)
-        filename = str(self.id).strip() + extension
+        filename = self.get_filename()
         path = os.path.join(upload_folder, filename)
 
         try:
@@ -40,6 +39,12 @@ class File(db.Model):
             pass
 
         self.file.save(path)
+
+    def get_filename(self):
+        _, extension = os.path.splitext(self.name)
+        filename = str(self.id).strip() + extension
+
+        return filename.strip()
 
     def __repr__(self):
         return '<File - %s>' % self.name
