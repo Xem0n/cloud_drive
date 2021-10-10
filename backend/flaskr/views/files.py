@@ -27,7 +27,7 @@ def download(file_id):
 @jwt_required()
 def upload():
     if 'file' not in request.files:
-        return {'error': 'No file sent!'}
+        return {'error': 'No file sent!'}, 406
 
     file = File(
         file = request.files['file'],
