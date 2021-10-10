@@ -35,17 +35,17 @@ def login():
 
     if user:
         return {'error': 'Already logged in!'}, 403
+
+    name = request.form.get('name', '')
+    password = request.form.get('password', '')
+    user = authenticate(name, password)
+
+    if user:
+        token = create_access_token(identity=user.id)
+
+        return {'token': token}
     else:
-        name = request.form.get('name', '')
-        password = request.form.get('password', '')
-        user = authenticate(name, password)
-
-        if user:
-            token = create_access_token(identity=user.id)
-
-            return {'token': token}
-        else:
-            return {'error': 'Wrong credentials!'}, 406
+        return {'error': 'Wrong credentials!'}, 406
 
 @bp.route('/logout', methods=['DELETE'])
 @jwt_required()
