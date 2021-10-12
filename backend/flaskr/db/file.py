@@ -17,7 +17,7 @@ class File(db.Model):
         super().__init__(**kwargs)
 
     def is_valid(self):
-        if self.file.filename.strip() == '':
+        if self.name.strip() == '':
             raise InvalidFilenameError('Invalid filename!')
 
         return True
