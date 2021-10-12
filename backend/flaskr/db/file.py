@@ -51,7 +51,7 @@ class File(db.Model):
         _, extension = os.path.splitext(self.name)
         extension = extension.strip()
 
-        if extension == '':
+        if extension == '' and self.name[0] == '.':
             extension = self.name
 
         self.name = name + extension
