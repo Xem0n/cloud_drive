@@ -46,6 +46,19 @@ class File(db.Model):
 
         return filename.strip()
 
+    def update_name(self, name):
+        name = name.strip()
+        _, extension = os.path.splitext(self.name)
+        extension = extension.strip()
+
+        if extension == '':
+            extension = self.name
+
+        self.name = name + extension
+
+        self.is_valid()
+        db.session.commit()
+
     def __repr__(self):
         return '<File - %s>' % self.name
 
