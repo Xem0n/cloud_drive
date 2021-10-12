@@ -36,6 +36,20 @@ def download(file):
         attachment_filename=file.name
     )
 
+@bp.route('/<int:file_id>', methods=['PATCH'])
+@jwt_required()
+@file_required
+def update(file):
+    new_name = request.form.get('name', '')
+
+    try:
+        file.update_name(new_name)
+    except Exception as e:
+        return {'error': str(e)}, 406
+    else:
+        return {'msg': 'ok'}
+
+
 @bp.route('/', methods=['POST'])
 @jwt_required()
 def upload():
