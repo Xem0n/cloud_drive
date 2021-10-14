@@ -3,6 +3,7 @@ from flask_jwt_extended import JWTManager, get_jwt_identity
 
 from .bcrypt import bcrypt
 from .db.user import User
+from .errors import InvalidCredentialsError
 
 jwt = JWTManager()
 
@@ -27,4 +28,4 @@ def authenticate(name, password):
     if user and bcrypt.check_password_hash(user.password, password):
         return user
     else:
-        return None
+        raise InvalidCredentialsError('Invalid credentials!')
