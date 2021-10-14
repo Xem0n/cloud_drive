@@ -44,6 +44,9 @@ def download(file):
 def update(file):
     new_name = request.form.get('name', '')
 
+    file.update_name(new_name)
+    file.is_valid()
+    db.session.commit()
 
     return {'msg': 'ok'}
 

@@ -58,8 +58,5 @@ class File(db.Model):
 
         self.name = name + extension
 
-        self.is_valid()
-        db.session.commit()
-
     def __repr__(self):
         return '<File - %s>' % self.name
