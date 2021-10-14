@@ -1,7 +1,9 @@
 import os
 from datetime import datetime
 from flask import current_app
+
 from . import db
+from flaskr.errors import FileError
 
 class File(db.Model):
     # id serves as a path too to avoid injecting files with invalid names 
@@ -18,7 +20,7 @@ class File(db.Model):
 
     def is_valid(self):
         if self.name.strip() == '':
-            raise InvalidFilenameError('Invalid filename!')
+            raise FileError('Invalid filename!')
 
         return True
 
@@ -61,6 +63,3 @@ class File(db.Model):
 
     def __repr__(self):
         return '<File - %s>' % self.name
-
-class InvalidFilenameError(Exception):
-    pass

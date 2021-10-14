@@ -3,8 +3,10 @@ from flask import Blueprint
 from flask.globals import current_app, request
 from flask.helpers import send_from_directory
 from flask_jwt_extended import jwt_required, get_current_user
-from flaskr.db import user
+
+from flaskr.db import db, user
 from flaskr.db.file import File
+from flaskr.errors import FileError
 
 bp = Blueprint('files', __name__, url_prefix='/files')
 
@@ -16,7 +18,7 @@ def file_required(func):
         file = File.query.filter_by(id=file_id, user_id=user.id).first()
 
         if not file:
-            return {'error': 'Invalid id!'}, 406
+            raise FileError('Invalid id!')
 
         del kwargs['file_id']
         kwargs['file'] = file
@@ -42,30 +44,21 @@ def download(file):
 def update(file):
     new_name = request.form.get('name', '')
 
-    try:
-        file.update_name(new_name)
-    except Exception as e:
-        return {'error': str(e)}, 406
-    else:
-        return {'msg': 'ok'}
 
+    return {'msg': 'ok'}
 
 @bp.route('/', methods=['POST'])
 @jwt_required()
 def upload():
     if 'file' not in request.files:
-        return {'error': 'No file sent!'}, 406
+        raise FileError('No file sent!')
 
     file = File(
         file = request.files['file'],
         user_id = get_current_user().id
     )
 
-    try:
-        file.is_valid()
-    except Exception as e:
-        return {'error': str(e)}, 406
-    else:
-        file.save()
+    file.is_valid()
+    file.save()
 
-        return {'msg': 'ok'}
+    return {'msg': 'ok'}

@@ -1,6 +1,8 @@
 from sqlalchemy.orm import backref
-from . import db
 from flaskr.bcrypt import bcrypt
+
+from . import db
+from flaskr.errors import InvalidCredentialsError
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
@@ -10,13 +12,13 @@ class User(db.Model):
 
     def is_valid(self):
         if not 3 < len(self.name) < 80:
-            raise InvalidNameError('Invalid username!')
+            raise InvalidCredentialsError('Invalid username!')
 
         if len(self.password) < 8 or len(self.password) > 16:
-            raise InvalidPasswordError('Invalid password!')
+            raise InvalidCredentialsError('Invalid password!')
 
         if User.query.filter_by(name=self.name).first():
-            raise AlreadyExistsError('User with given name already exists!')
+            raise InvalidCredentialsError('User with given name already exists!')
 
         return True
 
@@ -29,12 +31,3 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %s - %s>' % (self.name, self.password)
-
-class InvalidNameError(Exception):
-    pass
-
-class InvalidPasswordError(Exception):
-    pass
-
-class AlreadyExistsError(Exception):
-    pass

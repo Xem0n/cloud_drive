@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from werkzeug.exceptions import HTTPException
 
 from .db import db
 from .auth import jwt
@@ -7,6 +8,7 @@ from .bcrypt import bcrypt
 
 from .views.auth import bp as auth_blueprint
 from .views.files import bp as files_blueprint
+from .views.error_handler import error_handler
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -43,3 +45,5 @@ def init_extensions(app):
 def register_blueprints(app):
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(files_blueprint)
+
+    app.register_error_handler(HTTPException, error_handler)

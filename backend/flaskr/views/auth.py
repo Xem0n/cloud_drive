@@ -8,6 +8,7 @@ from flask_jwt_extended import (
 
 from flaskr.auth import authenticate, token_blacklist
 from flaskr.db.user import User
+from flaskr.errors import UserError, InvalidCredentialsError
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -17,16 +18,11 @@ def register():
     password = request.form.get('password', '').strip()
 
     new_user = User(name=name, password=password)
+    new_user.is_valid()
+    new_user.encrypt()
+    new_user.save()
 
-    try:
-        new_user.is_valid()
-    except Exception as e:
-        return {'error': str(e)}, 406
-    else:
-        new_user.encrypt()
-        new_user.save()
-
-        return {'msg': 'Ok'}, 200
+    return {'msg': 'ok'}
 
 @bp.route('/login', methods=['POST'])
 @jwt_required(optional=True)
@@ -34,7 +30,7 @@ def login():
     user = get_current_user()
 
     if user:
-        return {'error': 'Already logged in!'}, 403
+        raise UserError('Already logged in')
 
     name = request.form.get('name', '')
     password = request.form.get('password', '')
@@ -45,7 +41,7 @@ def login():
 
         return {'token': token}
     else:
-        return {'error': 'Wrong credentials!'}, 406
+        raise InvalidCredentialsError('Invalid credentials!')
 
 @bp.route('/logout', methods=['DELETE'])
 @jwt_required()
