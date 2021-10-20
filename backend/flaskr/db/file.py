@@ -11,6 +11,8 @@ class File(db.Model):
     name = db.Column(db.String(80), unique=False, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    deleted = db.Column(db.Boolean, nullable=False, default=False)
 
     def __init__(self, file, **kwargs):
         self.file = file
