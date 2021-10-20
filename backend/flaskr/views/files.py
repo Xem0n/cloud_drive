@@ -1,7 +1,6 @@
 from functools import wraps
 from flask import Blueprint
-from flask.globals import current_app, request
-from flask.helpers import send_from_directory
+from flask.globals import request
 from flask_jwt_extended import jwt_required, get_current_user
 
 from flaskr.db import db, user
@@ -31,12 +30,7 @@ def file_required(func):
 @jwt_required()
 @file_required
 def download(file):
-    return send_from_directory(
-        '../' + current_app.config['UPLOAD_FOLDER'],
-        file.get_filename(),
-        as_attachment=True,
-        attachment_filename=file.name
-    )
+    return file.download()
 
 @bp.route('/<int:file_id>', methods=['PATCH'])
 @jwt_required()
