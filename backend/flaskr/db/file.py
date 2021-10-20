@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from flask import current_app
+from werkzeug.datastructures import FileStorage
 
 from . import db
 from flaskr.errors import FileError
@@ -15,6 +16,7 @@ class File(db.Model):
     deleted = db.Column(db.Boolean, nullable=False, default=False)
 
     def __init__(self, file, **kwargs):
+        file = Upload(file)
         self.file = file
         kwargs['name'] = file.filename
 
@@ -30,19 +32,7 @@ class File(db.Model):
         db.session.add(self)
         db.session.commit()
 
-        self.save_file()
-    
-    def save_file(self):
-        upload_folder = current_app.config['UPLOAD_FOLDER']
-        filename = self.get_filename()
-        path = os.path.join(upload_folder, filename)
-
-        try:
-            os.mkdir(upload_folder)
-        except:
-            pass
-
-        self.file.save(path)
+        self.file.save(self.get_filename())
 
     def get_filename(self):
         _, extension = os.path.splitext(self.name)
@@ -62,3 +52,18 @@ class File(db.Model):
 
     def __repr__(self):
         return '<File - %s>' % self.name
+
+class Upload(FileStorage):
+    def __init__(self, file):
+        super().__init__(file, filename=file.filename)
+
+    def save(self, filename):
+        upload_folder = current_app.config['UPLOAD_FOLDER']
+        path = os.path.join(upload_folder, filename)
+
+        try:
+            os.mkdir(upload_folder)
+        except:
+            pass
+
+        super().save(path)
