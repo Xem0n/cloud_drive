@@ -14,7 +14,7 @@ def file_required(func):
     def decorator(*args, **kwargs):
         user = get_current_user()
         file_id = kwargs.get('file_id', 0)
-        file = File.query.filter_by(id=file_id, user_id=user.id).first()
+        file = File.query.filter_by(id=file_id, user_id=user.id, deleted=False).first()
 
         if not file:
             raise FileError('Invalid id!')
@@ -41,6 +41,14 @@ def update(file):
     file.update_name(new_name)
     file.is_valid()
     db.session.commit()
+
+    return {'msg': 'ok'}
+
+@bp.route('/<int:file_id>', methods=['DELETE'])
+@jwt_required()
+@file_required
+def delete(file):
+    file.delete()
 
     return {'msg': 'ok'}
 

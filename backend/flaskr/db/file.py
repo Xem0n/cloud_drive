@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from flask import current_app
+from flask import current_app, send_from_directory
 from werkzeug.datastructures import FileStorage
 
 from . import db
@@ -49,6 +49,18 @@ class File(db.Model):
             extension = self.name
 
         self.name = name + extension
+
+    def download(self):
+        return send_from_directory(
+            '../' + current_app.config['UPLOAD_FOLDER'],
+            self.get_filename(),
+            as_attachment=True,
+            attachment_filename=self.name
+        )
+
+    def delete(self):
+        self.deleted = True
+        db.session.commit()
 
     def __repr__(self):
         return '<File - %s>' % self.name
