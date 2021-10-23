@@ -1,6 +1,5 @@
 import os
 import tempfile
-from instance.config import SECRET_KEY
 
 import pytest
 
