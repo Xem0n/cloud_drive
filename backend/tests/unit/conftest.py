@@ -17,8 +17,8 @@ def app():
         'TESTING': True,
         'SQLALCHEMY_DATABASE_URI': 'sqlite:///' + db_path,
         'SQLALCHEMY_TRACK_MODIFICATIONS': False,
-        'SECRET_KEY': b'\xe5\x03%\xf5\x99\xb8N\xc7\x1b2h\xdc-;T\xb5\x8b\x86\xde\xf6\xb4\x7f\x9aO',
-        'JWT_SECRET_KEY': b'\x02C\xfc\x00\xb9\xb0\xcf\xda\xd6bi\x027\xec\xc7\xba\x9d\xab\xfb\x16\x89\xe4m5'
+        'SECRET_KEY': os.urandom(24),
+        'JWT_SECRET_KEY': os.urandom(24)
     })
 
     with app.app_context():
