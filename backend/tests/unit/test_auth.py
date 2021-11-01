@@ -12,6 +12,6 @@ def test_auth(app):
         assert authenticate(USERNAME, PASSWORD)
 
         with pytest.raises(InvalidCredentialsError):
-            assert authenticate('invalid username', 'password1!23')
-            assert authenticate('username', 'invalid password')
-            assert authenticate('invalid username', 'invalid password')
+            assert authenticate('invalid username', 'password1!23') is InvalidCredentialsError
+            assert authenticate('username', 'invalid password') is InvalidCredentialsError
+            assert authenticate('invalid username', 'invalid password') is InvalidCredentialsError
