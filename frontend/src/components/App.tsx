@@ -1,16 +1,28 @@
 import React, { useEffect } from 'react';
 import Router from './Router';
 import Token from 'api/Token';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+
+const FORM_PATHS = [
+  '/login',
+  '/register'
+];
 
 const App = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (Token.get() === '') {
-      navigate('/login');
+    if (Token.get() !== '') {
+      return;
     }
-  }, [navigate]);
+
+    if (FORM_PATHS.includes(location.pathname)) {
+      return;
+    }
+
+    navigate('/login');
+  }, [navigate, location]);
 
   return (
     <div className="App">
