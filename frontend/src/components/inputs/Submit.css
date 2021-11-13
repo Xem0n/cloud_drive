@@ -1,0 +1,31 @@
+.input-submit {
+    width: min(80%, 250px);
+    height: 40px;
+
+    margin-top: 20px;
+
+    outline: none;
+    border: #001219 solid 1px;
+    border-radius: 0px;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    color: inherit;
+    font-family: inherit;
+    font-size: 1.2rem;
+
+    -webkit-appearance: none;
+
+    transition: all .1s;
+}
+
+.input-submit:focus,
+.input-submit:hover {
+    /* background: #dee2e6; */
+
+    border-radius: 0px;
+
+    box-shadow: 5px 5px #ffafcc;
+}
