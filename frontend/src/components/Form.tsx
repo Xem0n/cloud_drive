@@ -10,18 +10,17 @@ enum FormTypes {
 };
 
 const FormInfo = {
-    // Login
-    0: {
+    [FormTypes.Login]: {
         submit: 'Log In',
         link: '/register',
         linkText: 'Create new account'
     },
-    // Register
-    1: {
+    [FormTypes.Register]: {
         submit: 'Register',
         link: '/login',
         linkText: 'Already have an account? Log In'
-    }
+    },
+    
 };
 
 type FormProps = {
