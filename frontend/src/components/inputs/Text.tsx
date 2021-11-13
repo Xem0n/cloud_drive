@@ -13,6 +13,10 @@ type TextProps = {
 };
 
 const Text = (props: TextProps) => {
+    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+        props.onChange(event.target.value);
+    };
+
     const isFilled = (): string => (
         props.value !== '' ? FILLED_CLASS : ''
     );
@@ -25,7 +29,7 @@ const Text = (props: TextProps) => {
                 id={props.name}
                 type={props.type}
                 value={props.value}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => props.onChange(e.target.value)}
+                onChange={onChange}
                 required={props.required || false} />
 
             <label 
