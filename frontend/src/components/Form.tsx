@@ -28,7 +28,7 @@ type FormProps = {
 };
 
 const Form = (props: FormProps) => {
-    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -43,8 +43,8 @@ const Form = (props: FormProps) => {
             <Text
                 name='name'
                 type='text'
-                value={email}
-                onChange={setEmail}
+                value={username}
+                onChange={setUsername}
                 placeholder='Username' />
 
             <Text
