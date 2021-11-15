@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { login, register } from 'api/Auth';
 import Text from './inputs/Text';
 import Submit from './inputs/Submit';
 import './Form.css';
@@ -12,11 +13,13 @@ enum FormTypes {
 const FormInfo = {
     [FormTypes.Login]: {
         submit: 'Log In',
+        onSubmit: login,
         link: '/register',
         linkText: 'Create new account'
     },
     [FormTypes.Register]: {
         submit: 'Register',
+        onSubmit: register,
         link: '/login',
         linkText: 'Already have an account? Log In'
     },
@@ -36,6 +39,12 @@ const Form = (props: FormProps) => {
 
     const submit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        info.onSubmit({
+            username: username,
+            password: password,
+            confirmedPassword: confirmPassword
+        }).catch(reason => console.error(reason));
     };
 
     return (
