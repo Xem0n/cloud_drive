@@ -23,7 +23,6 @@ const FormInfo = {
         link: '/login',
         linkText: 'Already have an account? Log In'
     },
-    
 };
 
 type FormProps = {
