@@ -1,0 +1,25 @@
+html {
+    overflow-x: hidden;
+}
+
+.route-enter {
+    transform: translateX(-100%);
+}
+
+.route-enter-active {
+    transform: translateX(0);
+}
+
+.route-exit {
+    transform: translateX(0);
+}
+
+.route-exit-active {
+    transform: translateX(100%);
+}
+
+.route-enter-active,
+.route-exit-active {
+    /* transition: transform 400ms cubic-bezier( 0.3, 0.03, 0.64, 0.52 ); */
+    transition: transform 400ms ease-in-out;
+}
